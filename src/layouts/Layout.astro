@@ -1,51 +1,90 @@
 ---
 interface Props {
-	title: string;
+    title: string;
 }
 
 const { title } = Astro.props;
+import "../../src/scss/custom.scss";
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Astro description" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="description" content="Astro description" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="generator" content={Astro.generator} />
+        <title>{title}</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    </head>
+    <body>
+        <slot />
+        <script
+            is:inline
+            src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.0/flowbite.min.js"
+        ></script>
+    </body>
+    <script is:inline>
+        const slideshowImages = document.querySelectorAll(
+            ".intro-slideshow img"
+        );
+
+        const nextImageDelay = 5000;
+        let currentImageCounter = 0; // setting a variable to keep track of the current image (slide)
+
+        // slideshowImages[currentImageCounter].style.display = "block";
+        slideshowImages[currentImageCounter].style.opacity = 1;
+
+        setInterval(nextImage, nextImageDelay);
+
+        function nextImage() {
+            // slideshowImages[currentImageCounter].style.display = "none";
+            slideshowImages[currentImageCounter].style.opacity = 0;
+
+            currentImageCounter =
+                (currentImageCounter + 1) % slideshowImages.length;
+
+            // slideshowImages[currentImageCounter].style.display = "block";
+            slideshowImages[currentImageCounter].style.opacity = 1;
+        }
+    </script>
+    <script is:inline>
+        function updateCountdown() {
+            var countDownDate = new Date("Jan 5, 2024 15:37:25").getTime();
+            var now = new Date().getTime();
+            var distance = countDownDate - now;
+
+            if (distance < 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("timer").innerHTML = "EXPIRED";
+                return;
+            }
+
+            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            var hours = Math.floor(
+                (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+            );
+            var minutes = Math.floor(
+                (distance % (1000 * 60 * 60)) / (1000 * 60)
+            );
+            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("timer").innerHTML =
+                days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+        }
+
+        // Update the countdown every 1 second
+        var countdownInterval = setInterval(updateCountdown, 1000);
+
+        // Initial call to display the countdown immediately
+        updateCountdown();
+    </script>
 </html>
-<style is:global>
-	:root {
-		--accent: 136, 58, 234;
-		--accent-light: 224, 204, 250;
-		--accent-dark: 49, 10, 101;
-		--accent-gradient: linear-gradient(
-			45deg,
-			rgb(var(--accent)),
-			rgb(var(--accent-light)) 30%,
-			white 60%
-		);
-	}
-	html {
-		font-family: system-ui, sans-serif;
-		background: #13151a;
-		background-size: 224px;
-	}
-	code {
-		font-family:
-			Menlo,
-			Monaco,
-			Lucida Console,
-			Liberation Mono,
-			DejaVu Sans Mono,
-			Bitstream Vera Sans Mono,
-			Courier New,
-			monospace;
-	}
-</style>
