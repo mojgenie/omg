@@ -11,6 +11,8 @@ function TicketLabel({
     updateCount,
     handleAdd,
     handleRemove,
+    onProceed,
+    tickets,
 }) {
     return (
         <div className="px-3 py-5 flex items-center justify-between m-5 shadow rounded-[25px]">
@@ -22,7 +24,7 @@ function TicketLabel({
                 >
                     {title}
                     <span className="text-sm font-light text-gray-500">
-                        × ({noOf} pack per ticket)
+                        × ({noOf} pax per ticket)
                     </span>
                 </h2>
                 <p className="my-2 text-sm text-gray-500">
@@ -34,8 +36,8 @@ function TicketLabel({
                 <button
                     onClick={() => {
                         setStep(1);
-                        updateCount(id, count);
-                        console.log("ahfoahf");
+                        updateCount(id, count, noOf, tickets);
+                        onProceed(noOf);
                     }}
                     id="addButton"
                     type="button"
@@ -74,7 +76,8 @@ function TicketLabel({
                         <span
                             className="px-5 py-2.5 cursor-pointer"
                             onClick={() => {
-                                handleRemove(id, count);
+                                handleRemove(id, count, noOf, tickets);
+                                onProceed(noOf);
                             }}
                         >
                             -
@@ -84,7 +87,8 @@ function TicketLabel({
                         <span
                             className="px-5 py-2.5 cursor-pointer"
                             onClick={() => {
-                                handleAdd(id, count);
+                                handleAdd(id, count, noOf, tickets);
+                                onProceed(noOf);
                             }}
                         >
                             +

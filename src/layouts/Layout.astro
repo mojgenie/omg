@@ -11,10 +11,10 @@ import "../../src/scss/custom.scss";
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta name="description" content="Astro description" />
+        <meta name="" content="" />
         <meta name="viewport" content="width=device-width" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <meta name="generator" content={Astro.generator} />
+        <link rel="icon" type="" href="" />
+        <!-- <meta name="generator" content={Astro.generator} /> -->
         <title>{title}</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -55,36 +55,5 @@ import "../../src/scss/custom.scss";
             // slideshowImages[currentImageCounter].style.display = "block";
             slideshowImages[currentImageCounter].style.opacity = 1;
         }
-    </script>
-    <script is:inline>
-        function updateCountdown() {
-            var countDownDate = new Date("Jan 5, 2024 15:37:25").getTime();
-            var now = new Date().getTime();
-            var distance = countDownDate - now;
-
-            if (distance < 0) {
-                clearInterval(countdownInterval);
-                document.getElementById("timer").innerHTML = "EXPIRED";
-                return;
-            }
-
-            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            var hours = Math.floor(
-                (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-            );
-            var minutes = Math.floor(
-                (distance % (1000 * 60 * 60)) / (1000 * 60)
-            );
-            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById("timer").innerHTML =
-                days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
-        }
-
-        // Update the countdown every 1 second
-        var countdownInterval = setInterval(updateCountdown, 1000);
-
-        // Initial call to display the countdown immediately
-        updateCountdown();
     </script>
 </html>
