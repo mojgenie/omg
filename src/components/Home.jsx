@@ -192,6 +192,7 @@ function Home() {
                                         phone={user?.phone}
                                     />
                                 </div>
+
                                 {index === 0 && users?.length > 1 && (
                                     <div className="px-5">
                                         <label className="relative inline-flex items-center cursor-pointer ">
@@ -243,6 +244,9 @@ function Home() {
             tickets[2].count > 0 ||
             tickets[3].count > 0 ? (
                 <ProceedLabel
+                    name={users.name}
+                    email={users.email}
+                    phone={users.phone}
                     totalCount={totalCount}
                     proceed={proceed}
                     setProceed={setProceed}
