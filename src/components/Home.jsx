@@ -9,7 +9,7 @@ function Home() {
     const [totalCount, setTotalCount] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
     const [users, setUsers] = useState([]);
-
+    const [disabled, setDisabled] = useState("");
     const [tickets, setTickets] = useState([
         {
             id: 1,
@@ -61,12 +61,17 @@ function Home() {
     const handleAdd = (itemId, count, updateBy = 0, ticketsCout) => {
         const updatedItems = tickets.map((item) =>
             item.id === itemId
-                ? { ...item, count: count + 1, tickets: ticketsCout + updateBy }
+                ? {
+                      ...item,
+                      count: count + 1,
+                      tickets: ticketsCout + updateBy,
+                  }
                 : item
         );
 
         setTickets(updatedItems);
     };
+
     const handleRemove = (itemId, count, updateBy = 0, ticketsCout) => {
         const updatedItems = tickets.map((item) =>
             item.id === itemId
@@ -161,11 +166,22 @@ function Home() {
     }, [tickets]);
 
     useEffect(() => {
+        tickets.forEach((ticket) => {
+            if (ticket.count > 0) {
+                setDisabled(ticket.id);
+            } else {
+                setDisabled("");
+            }
+        });
+    }, [tickets]);
+
+    useEffect(() => {
         console.clear();
         console.log("tickets : ", tickets);
         // console.log("totalCount : ", totalCount);
         console.log("users : ", users);
     }, [tickets, totalCount, users]);
+
     return (
         <div>
             <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center my-5 mb-[50px]">
@@ -234,6 +250,8 @@ function Home() {
                                 handleAdd={handleAdd}
                                 handleRemove={handleRemove}
                                 tickets={ticket.tickets}
+                                disabled={disabled}
+                                setTickets={setTickets}
                             />
                         ))}
                     </div>

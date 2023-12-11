@@ -15,7 +15,7 @@ function HomeSinglePage() {
             title: "Siver",
             count: 0,
             noOf: 1,
-            price: 100,
+            price: 499,
             type: "silver",
             tickets: 0,
         },

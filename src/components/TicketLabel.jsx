@@ -13,6 +13,7 @@ function TicketLabel({
     handleRemove,
     onProceed,
     tickets,
+    disabled,
 }) {
     return (
         <div className="px-3 py-5 flex items-center justify-between m-5 shadow rounded-[25px]">
@@ -39,6 +40,7 @@ function TicketLabel({
                         updateCount(id, count, noOf, tickets);
                         onProceed(noOf);
                     }}
+                    disabled={disabled === id ? false : true}
                     id="addButton"
                     type="button"
                     className={`text-white ${
@@ -88,6 +90,7 @@ function TicketLabel({
                             className="px-5 py-2.5 cursor-pointer"
                             onClick={() => {
                                 handleAdd(id, count, noOf, tickets);
+
                                 onProceed(noOf);
                             }}
                         >
