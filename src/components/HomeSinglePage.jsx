@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import TicketLabel from "./TicketLabel";
 import ProceedLabel from "./ProceedLabel";
 import Form from "./Form";
-
-function Home() {
+function HomeSinglePage() {
     const [step, setStep] = useState(0);
     const [proceed, setProceed] = useState(false);
     const [totalCount, setTotalCount] = useState(0);
@@ -12,38 +11,11 @@ function Home() {
 
     const [tickets, setTickets] = useState([
         {
-            id: 1,
-            title: "Gold ",
-            count: 0,
-            noOf: 4,
-            price: 3333,
-            type: "gold",
-            tickets: 0,
-        },
-        {
-            id: 2,
-            title: "Gold ",
-            count: 0,
-            noOf: 3,
-            price: 2222,
-            type: "gold",
-            tickets: 0,
-        },
-        {
-            id: 3,
-            title: "Gold ",
-            count: 0,
-            noOf: 1,
-            price: 999,
-            type: "gold",
-            tickets: 0,
-        },
-        {
             id: 4,
             title: "Siver",
             count: 0,
             noOf: 1,
-            price: 499,
+            price: 100,
             type: "silver",
             tickets: 0,
         },
@@ -239,10 +211,7 @@ function Home() {
                     </div>
                 </div>
             )}
-            {tickets[0].count > 0 ||
-            tickets[1].count > 0 ||
-            tickets[2].count > 0 ||
-            tickets[3].count > 0 ? (
+            {tickets[0].count > 0 ? (
                 <ProceedLabel
                     totalCount={totalCount}
                     proceed={proceed}
@@ -255,4 +224,4 @@ function Home() {
     );
 }
 
-export default Home;
+export default HomeSinglePage;
