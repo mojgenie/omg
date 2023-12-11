@@ -9,7 +9,7 @@ function Home() {
     const [totalCount, setTotalCount] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
     const [users, setUsers] = useState([]);
-    const [disabled, setDisabled] = useState("");
+    const [active, setActive] = useState(null);
     const [tickets, setTickets] = useState([
         {
             id: 1,
@@ -165,22 +165,11 @@ function Home() {
         setTotalPrice(total_price);
     }, [tickets]);
 
-    useEffect(() => {
-        tickets.forEach((ticket) => {
-            if (ticket.count > 0) {
-                setDisabled(ticket.id);
-            } else {
-                setDisabled("");
-            }
-        });
-    }, [tickets]);
-
-    useEffect(() => {
-        console.clear();
-        console.log("tickets : ", tickets);
-        // console.log("totalCount : ", totalCount);
-        console.log("users : ", users);
-    }, [tickets, totalCount, users]);
+    //   useEffect(() => {
+    //     console.log("tickets : ", tickets);
+    //     // console.log("totalCount : ", totalCount);
+    //     console.log("users : ", users);
+    //   }, [tickets, totalCount, users]);
 
     return (
         <div>
@@ -234,8 +223,9 @@ function Home() {
             ) : (
                 <div>
                     <div className="max-w-[800px] mx-auto">
-                        {tickets?.map((ticket) => (
+                        {tickets?.map((ticket, index) => (
                             <TicketLabel
+                                key={index}
                                 onProceed={onProceed}
                                 id={ticket?.id}
                                 noOf={ticket?.noOf}
@@ -250,7 +240,8 @@ function Home() {
                                 handleAdd={handleAdd}
                                 handleRemove={handleRemove}
                                 tickets={ticket.tickets}
-                                disabled={disabled}
+                                active={active}
+                                setActive={setActive}
                                 setTickets={setTickets}
                             />
                         ))}

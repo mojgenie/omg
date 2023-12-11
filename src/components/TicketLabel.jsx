@@ -13,7 +13,8 @@ function TicketLabel({
     handleRemove,
     onProceed,
     tickets,
-    disabled,
+    active,
+    setActive,
 }) {
     return (
         <div className="px-3 py-5 flex items-center justify-between m-5 shadow rounded-[25px]">
@@ -36,11 +37,18 @@ function TicketLabel({
             {count === 0 ? (
                 <button
                     onClick={() => {
-                        setStep(1);
-                        updateCount(id, count, noOf, tickets);
-                        onProceed(noOf);
+                        console.log(active);
+                        if (
+                            active === undefined ||
+                            active === null ||
+                            active === id
+                        ) {
+                            setStep(1);
+                            updateCount(id, count, noOf, tickets);
+                            onProceed(noOf);
+                            setActive(id);
+                        }
                     }}
-                    disabled={disabled === id ? false : true}
                     id="addButton"
                     type="button"
                     className={`text-white ${
@@ -80,6 +88,9 @@ function TicketLabel({
                             onClick={() => {
                                 handleRemove(id, count, noOf, tickets);
                                 onProceed(noOf);
+                                if (count === 1) {
+                                    setActive();
+                                }
                             }}
                         >
                             -
