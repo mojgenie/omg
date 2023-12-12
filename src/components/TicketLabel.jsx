@@ -3,6 +3,7 @@ import React, { useState } from "react";
 function TicketLabel({
     id,
     gold,
+    silver,
     title,
     count,
     price,
@@ -16,6 +17,7 @@ function TicketLabel({
     active,
     setActive,
 }) {
+    console.log("active:", active);
     return (
         <div className="px-3 py-5 flex items-center justify-between m-5 shadow rounded-[25px]">
             <div>
@@ -52,10 +54,13 @@ function TicketLabel({
                     id="addButton"
                     type="button"
                     className={`text-white ${
-                        gold
+                        gold && (active === null || active === undefined)
                             ? "bg-[#FF9119] hover:bg-[#FF9119]/80"
-                            : "bg-[#C0C0C0] hover:bg-[#C0C0C0]/80"
-                    } focus:ring-4 focus:outline-none focus:ring-[#FF9119]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2`}
+                            : silver &&
+                              (active === null || active === undefined)
+                            ? "bg-[#C0C0C0] hover:bg-[#C0C0C0]/80"
+                            : "bg-[#EAECEC] hover:bg-[#EAECEC]/80"
+                    }  focus:ring-4 focus:outline-none focus:ring-[#FF9119]/50 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2`}
                 >
                     <div className="inline-flex items-center">
                         <svg

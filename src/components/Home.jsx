@@ -40,7 +40,7 @@ function Home() {
         },
         {
             id: 4,
-            title: "Siver",
+            title: "silver",
             count: 0,
             noOf: 1,
             price: 499,
@@ -233,6 +233,7 @@ function Home() {
                                 setStep={setStep}
                                 client:load
                                 gold={ticket?.type === "gold"}
+                                silver={ticket?.type === "silver"}
                                 title={ticket?.title}
                                 count={ticket?.count}
                                 price={ticket?.price}
