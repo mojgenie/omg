@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import TicketLabel from "./TicketLabel";
 import ProceedLabel from "./ProceedLabel";
 import Form from "./Form";
+import axios from "axios";
 
 function Home() {
     const [step, setStep] = useState(0);
@@ -48,6 +49,53 @@ function Home() {
             tickets: 0,
         },
     ]);
+    const [errors, setErrors] = useState({});
+// -------------------------------------------------------------------
+
+    const addTicket = async (formData) => {
+        console.log('Adding Ticket Data :: ', formData);
+        try {
+            const response = await axios.post('http://192.168.0.7:8001/api/add-tickets', formData, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            });
+            if (response.status === 200) {
+            const responseData = response.data;
+            window.location.href = responseData.payment_url;
+            } else {
+            console.error('API call failed:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error during API call:', error);
+        }
+};
+
+    const transFormUsers = () => {
+        const firstUser = users[0];
+        const firstUserValuesNotEmpty = firstUser && Object.values(firstUser).every((value) => value !== "");
+        
+        if (firstUserValuesNotEmpty) {
+            const formData = {
+            "ticket_type": tickets.find((ticket) => ticket.id === active)?.type || '',
+            "ticket_one": {
+                "name": firstUser.name || '',
+                "email": firstUser.email || '',
+                "ph_no": firstUser.phone || '',
+            },
+            //   ...(totalCount > 1 && {
+                "other_tickets": users.slice(1).map((user) => ({
+                "name": user?.name || firstUser.name || '',
+                "email": user?.email || firstUser.email || '',
+                "ph_no": user?.phone || firstUser.phone || '',
+                })),
+            //   }),
+            };
+
+        addTicket(formData);
+    }}
+// -------------------------------------------------------------------
 
     const updateCount = (itemId, count, updateBy = 0, ticketsCout) => {
         const updatedItems = tickets.map((item) =>
@@ -195,6 +243,8 @@ function Home() {
                                         name={user?.name}
                                         email={user?.email}
                                         phone={user?.phone}
+                                        errors={errors}
+                                        setErrors={setErrors}
                                     />
                                 </div>
 
@@ -259,6 +309,7 @@ function Home() {
                     setProceed={setProceed}
                     onProceed={onProceed}
                     totalPrice={totalPrice}
+                    toPayment={transFormUsers}
                 />
             ) : null}
         </div>
