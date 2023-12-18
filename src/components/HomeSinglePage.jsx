@@ -141,7 +141,7 @@ function HomeSinglePage() {
     return (
         <div>
             <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center my-5 mb-[50px]">
-                {proceed == false ? "Select your " : "Confrom your "}
+                {proceed == false ? "Select your " : "confirm your "}
                 <span className="underline underline-offset-3 decoration-8 decoration-blue-400 dark:decoration-blue-600">
                     Ticket's
                 </span>

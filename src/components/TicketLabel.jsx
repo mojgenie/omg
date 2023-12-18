@@ -17,7 +17,6 @@ function TicketLabel({
     active,
     setActive,
 }) {
-    console.log("active:", active);
     return (
         <div className="px-3 py-5 flex items-center justify-between m-5 shadow rounded-[25px]">
             <div>
@@ -39,7 +38,6 @@ function TicketLabel({
             {count === 0 ? (
                 <button
                     onClick={() => {
-                        console.log(active);
                         if (
                             active === undefined ||
                             active === null ||

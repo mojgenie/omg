@@ -53,48 +53,52 @@ function Home() {
 // -------------------------------------------------------------------
 
     const addTicket = async (formData) => {
-        console.log('Adding Ticket Data :: ', formData);
-        try {
-            const response = await axios.post('http://192.168.0.7:8001/api/add-tickets', formData, {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            });
-            if (response.status === 200) {
-            const responseData = response.data;
-            window.location.href = responseData.payment_url;
-            } else {
-            console.error('API call failed:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error during API call:', error);
-        }
+        console.log("🚀 ~ file: Home.jsx:56 ~ addTicket ~ formData:", formData)
+        // try {
+        //     const response = await axios.post('http://192.168.0.3:8001/api/add-tickets', formData, {
+        //     headers: {
+        //         'Accept': 'application/json',
+        //         'Content-Type': 'application/json'
+        //     },
+        //     });
+        //     if (response.status === 200) {
+        //     const responseData = response.data;
+        //     window.location.href = responseData.payment_url;
+        //     } else {
+        //     console.error('API call failed:', response.statusText);
+        //     }
+        // } catch (error) {
+        //     console.error('Error during API call:', error);
+        // }
 };
 
-    const transFormUsers = () => {
+   const transFormUsers = () => {
+    const UsersNotEmpty = users && users.every(user => Object.values(user).every(value => value !== ""));
+    const ErrorsIsEmpty =  Object.values(errors).every(value => value === "")
+    console.log("🚀 ~ file: Home.jsx:78 ~ transFormUsers ~ errors:", errors)
+    if (UsersNotEmpty && ErrorsIsEmpty) {
         const firstUser = users[0];
-        const firstUserValuesNotEmpty = firstUser && Object.values(firstUser).every((value) => value !== "");
-        
-        if (firstUserValuesNotEmpty) {
-            const formData = {
-            "ticket_type": tickets.find((ticket) => ticket.id === active)?.type || '',
+        const formData = {
+            "ticket_type": tickets.find((ticket) => ticket.id === active)?.id || '',
             "ticket_one": {
                 "name": firstUser.name || '',
                 "email": firstUser.email || '',
                 "ph_no": firstUser.phone || '',
             },
-            //   ...(totalCount > 1 && {
+            ...(users.length > 1 && {
                 "other_tickets": users.slice(1).map((user) => ({
-                "name": user?.name || firstUser.name || '',
-                "email": user?.email || firstUser.email || '',
-                "ph_no": user?.phone || firstUser.phone || '',
+                    "name": user?.name || firstUser.name || '',
+                    "email": user?.email || firstUser.email || '',
+                    "ph_no": user?.phone || firstUser.phone || '',
                 })),
-            //   }),
-            };
+            }),
+        };
 
         addTicket(formData);
-    }}
+    }
+};
+
+
 // -------------------------------------------------------------------
 
     const updateCount = (itemId, count, updateBy = 0, ticketsCout) => {
@@ -165,7 +169,7 @@ function Home() {
     const ticketCount = () => {};
 
     // Function to update the value of a specific property in the array
-    const updateUserName = (userId, newValue, type) => {
+    const updateUser = (userId, newValue, type) => {
         // Create a new array with the updated object
         const updatedUsers = users.map((user) => {
             if (user.id === userId && type === "name") {
@@ -218,28 +222,27 @@ function Home() {
     //     // console.log("totalCount : ", totalCount);
     //     console.log("users : ", users);
     //   }, [tickets, totalCount, users]);
-
     return (
         <div>
             <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center my-5 mb-[50px]">
-                {proceed == false ? "Select your " : "Confrom your "}
+                {proceed == false ? "Select your " : "confirm your "}
                 <span className="underline underline-offset-3 decoration-8 decoration-blue-400 dark:decoration-blue-600">
                     Ticket's
                 </span>
             </h1>
             {proceed === true ? (
                 <div>
-                    {users.map((user, index) => {
+                    {users?.map((user, index) => {
                         return (
-                            <>
-                                <div key={index}>
+                            <div key={index}>
+                                <div>
                                     <p className="text-sm font-light text-gray-500 px-5 pb-5">
                                         Tiket :{index + 1}
                                     </p>
                                     <Form
-                                        key={index}
+                                        key={user?.id}
                                         id={user?.id}
-                                        updateUserName={updateUserName}
+                                        updateUser={updateUser}
                                         name={user?.name}
                                         email={user?.email}
                                         phone={user?.phone}
@@ -266,7 +269,7 @@ function Home() {
                                         </label>
                                     </div>
                                 )}
-                            </>
+                            </div>
                         );
                     })}
                 </div>
