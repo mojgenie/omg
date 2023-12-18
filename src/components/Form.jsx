@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
-function Form({ id, updateUser, name, email, phone,ValidateEmail,ValidatePhone,flag }) {
+function Form({ id, updateUser, name, email, phone,ValidateEmail,ValidatePhone,flag, }) {
      const handlePhoneChange = (e) => {
     const formattedPhone = e.target.value.replace(/\D/g, "").substr(0, 10);
     updateUser(id, formattedPhone, "phone");
   };
+
+
     return (
         <>
             <form className="max-w-md mx-auto px-5">
-                <div className="">
+                <div className="" >
                     <div className="relative z-0 w-full mb-5 group">
                         <input
                             type="text"
@@ -66,7 +68,7 @@ function Form({ id, updateUser, name, email, phone,ValidateEmail,ValidatePhone,f
                             htmlFor="floating_phone"
                             className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                         >
-                            Phone number (123-456-7890)
+                            Phone number (808-456-7890)
                         </label>
                         {phone ? ValidatePhone(phone)?'':flag?<p className="text-red-500 text-xs mt-1">Not a valid phone</p>:'':flag?<p className="text-red-500 text-xs mt-1">Phone required</p>:'' }
                     </div>

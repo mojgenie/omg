@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TicketLabel from "./TicketLabel";
 import ProceedLabel from "./ProceedLabel";
 import Form from "./Form";
 import axios from "axios";
 
 function Home() {
+    const targetDivRef = useRef(null);
+
     const [step, setStep] = useState(0);
     const [proceed, setProceed] = useState(false);
     const [totalCount, setTotalCount] = useState(0);
@@ -51,63 +53,89 @@ function Home() {
     ]);
     const [errors, setErrors] = useState(false);
     const [flag, setFlag] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const scrollToTargetDiv = () => {
+        if (targetDivRef.current) {
+            targetDivRef.current.scrollIntoView({
+                behavior: 'smooth', // You can adjust the scroll behavior
+                block: 'start',     // You can adjust the vertical alignment
+            });
+        }
+    };
 
     const addTicket = async (formData) => {
         console.log("🚀 first url changeing must addTicket ~ formData:", formData)
         try {
-            const response = await axios.post('https://app.omyglamore.com/api/add-tickets', formData, {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            });
-            if (response.status === 200) {
-            const responseData = response.data;
-            window.location.href = responseData.payment_url;
-            } else {
-            console.error('API call failed:', response.statusText);
-            }
+            // const response = await axios.post('https://app.omyglamore.com/api/add-tickets', formData, {
+            // headers: {
+            //     'Accept': 'application/json',
+            //     'Content-Type': 'application/json'
+            // },
+            // });
+            // if (response.status === 200) {
+            // const responseData = response.data;
+            // window.location.href = responseData.payment_url;
+            // } else {
+            // console.error('API call failed:', response.statusText);
+            // }
+            setLoading(true)
+            axios.post('https://app.omyglamore.com/api/add-tickets', formData, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            }).then((response) => {
+                if (response.status === 200) {
+                    const responseData = response.data;
+                    window.location.href = responseData.payment_url;
+                }
+            }).catch(() => {
+                alert('something went wrong')
+            }).finally(() => {
+                setLoading(false)
+            })
         } catch (error) {
             console.error('Error during API call:', error);
         }
-};
+    };
 
-   const transFormUsers = () => {
-   setFlag(true)
-    const UsersNotEmpty = users && users.every(user => Object.values(user).every(value => value !== ""));
-    if (UsersNotEmpty && !errors) {
-        const firstUser = users[0];
-        const formData = {
-            "ticket_type": tickets.find((ticket) => ticket.id === active)?.id || '',
-            "ticket_one": {
-                "name": firstUser.name || '',
-                "email": firstUser.email || '',
-                "ph_no": firstUser.phone || '',
-            },
-            ...(users.length > 1 && {
-                "other_tickets": users.slice(1).map((user) => ({
-                    "name": user?.name || firstUser.name || '',
-                    "email": user?.email || firstUser.email || '',
-                    "ph_no": user?.phone || firstUser.phone || '',
-                })),
-            }),
-        };
+    const transFormUsers = () => {
+        setFlag(true)
+        const UsersNotEmpty = users && users.every(user => Object.values(user).every(value => value !== ""));
+        if (UsersNotEmpty && !errors) {
+            const firstUser = users[0];
+            const formData = {
+                "ticket_type": tickets.find((ticket) => ticket.id === active)?.id || '',
+                "ticket_one": {
+                    "name": firstUser.name || '',
+                    "email": firstUser.email || '',
+                    "ph_no": firstUser.phone || '',
+                },
+                ...(users.length > 1 && {
+                    "other_tickets": users.slice(1).map((user) => ({
+                        "name": user?.name || firstUser.name || '',
+                        "email": user?.email || firstUser.email || '',
+                        "ph_no": user?.phone || firstUser.phone || '',
+                    })),
+                }),
+            };
 
-        addTicket(formData);
+            addTicket(formData);
+        }
+    };
+
+
+    const ValidateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email)
     }
-};
 
-
- const ValidateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email)
-  }
-
-   const ValidatePhone = (phone) => {
-    const formattedPhone = phone.replace(/\D/g, "").substr(0, 10);
-    const isValidPhone = formattedPhone.length === 10;
-    return isValidPhone
- }
+    const ValidatePhone = (phone) => {
+        const formattedPhone = phone.replace(/\D/g, "").substr(0, 10);
+        const isValidPhone = formattedPhone.length === 10;
+        return isValidPhone
+    }
 
 
     const updateCount = (itemId, count, updateBy = 0, ticketsCout) => {
@@ -123,10 +151,10 @@ function Home() {
         const updatedItems = tickets.map((item) =>
             item.id === itemId
                 ? {
-                      ...item,
-                      count: count + 1,
-                      tickets: ticketsCout + updateBy,
-                  }
+                    ...item,
+                    count: count + 1,
+                    tickets: ticketsCout + updateBy,
+                }
                 : item
         );
 
@@ -175,7 +203,7 @@ function Home() {
         updateUserArray();
         // setTotalCount(temp);
     };
-    const ticketCount = () => {};
+    const ticketCount = () => { };
 
     // Function to update the value of a specific property in the array
     const updateUser = (userId, newValue, type) => {
@@ -223,16 +251,19 @@ function Home() {
         setTotalPrice(total_price);
     }, [tickets]);
 
-      useEffect(() => {
+    useEffect(() => {
         setErrors(false)
-        users.map((user)=>{
-            if (user.name==='' || user.email ==='' || !ValidateEmail(user.email) || !ValidatePhone(user.phone)) {
+        users.map((user) => {
+            if (user.name === '' || user.email === '' || !ValidateEmail(user.email) || !ValidatePhone(user.phone)) {
                 setErrors(true)
             }
         })
-        
-      }, [users]);
 
+    }, [users]);
+
+    useEffect(()=>{
+        scrollToTargetDiv()
+    },[])
     return (
         <div>
             <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center my-5 mb-[50px]">
@@ -246,7 +277,7 @@ function Home() {
                     {users?.map((user, index) => {
                         return (
                             <div key={index}>
-                                <div>
+                                <div  ref={targetDivRef}>
                                     <p className="text-sm font-light text-gray-500 px-5 pb-5">
                                         Ticket :{index + 1}
                                     </p>
@@ -315,9 +346,9 @@ function Home() {
                 </div>
             )}
             {tickets[0].count > 0 ||
-            tickets[1].count > 0 ||
-            tickets[2].count > 0 ||
-            tickets[3].count > 0 ? (
+                tickets[1].count > 0 ||
+                tickets[2].count > 0 ||
+                tickets[3].count > 0 ? (
                 <ProceedLabel
                     totalCount={totalCount}
                     proceed={proceed}
@@ -325,6 +356,7 @@ function Home() {
                     onProceed={onProceed}
                     totalPrice={totalPrice}
                     toPayment={transFormUsers}
+                    loading={loading}
                 />
             ) : null}
         </div>
