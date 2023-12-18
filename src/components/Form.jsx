@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function Form({ id, updateUser, name, email, phone,ValidateEmail,ValidatePhone }) {
+function Form({ id, updateUser, name, email, phone,ValidateEmail,ValidatePhone,flag }) {
      const handlePhoneChange = (e) => {
     const formattedPhone = e.target.value.replace(/\D/g, "").substr(0, 10);
     updateUser(id, formattedPhone, "phone");
@@ -14,7 +14,7 @@ function Form({ id, updateUser, name, email, phone,ValidateEmail,ValidatePhone }
                             type="text"
                             name="floating_first_name"
                             id="floating_first_name"
-                            className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer ${name ?'' : "border-red-500"}`}
+                            className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer ${name ?'' :flag? "border-red-500":''}`}
                             placeholder=" "
                             required
                             onChange={(e)=>updateUser(id, e.target.value, "name")}
@@ -26,12 +26,12 @@ function Form({ id, updateUser, name, email, phone,ValidateEmail,ValidatePhone }
                         >
                             First name
                         </label>
-                        {name ?'': (<p className="text-red-500 text-xs mt-1">Name Required</p>)}
+                        {name ?'': flag?<p className="text-red-500 text-xs mt-1">Name Required</p>:''}
                     </div>
                 </div>
                 <div className="relative z-0 w-full mb-5 group">
                     <input
-                        className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer ${ValidateEmail(email) ?'' : "border-red-500"}`}
+                        className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer ${ValidateEmail(email) ?'' :flag? "border-red-500":''}`}
                         type="email"
                         name="floating_email"
                         id="floating_email"
@@ -46,7 +46,7 @@ function Form({ id, updateUser, name, email, phone,ValidateEmail,ValidatePhone }
                     >
                         Email address
                     </label>
-                    {email === '' ?(<p className="text-red-500 text-xs mt-1">Email required</p> ):ValidateEmail(email)?'':<p className="text-red-500 text-xs mt-1">Not a valid email</p> }
+                    {email==='' ?flag? <p className="text-red-500 text-xs mt-1">Email required</p>:'':ValidateEmail(email)?'':flag?<p className="text-red-500 text-xs mt-1">Not a valid email</p>:'' }
                 </div>
 
                 <div className=" ">
@@ -56,7 +56,7 @@ function Form({ id, updateUser, name, email, phone,ValidateEmail,ValidatePhone }
                             pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                             name="floating_phone"
                             id="floating_phone"
-                            className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer ${ValidatePhone(phone) ?'' : "border-red-500"}`}
+                            className={`block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer ${ValidatePhone(phone) ?'' : flag?"border-red-500":''}`}
                             placeholder=" "
                             required
                             onChange={handlePhoneChange}
@@ -68,7 +68,7 @@ function Form({ id, updateUser, name, email, phone,ValidateEmail,ValidatePhone }
                         >
                             Phone number (123-456-7890)
                         </label>
-                        {phone ? ValidatePhone(phone)?'':<p className="text-red-500 text-xs mt-1">Not a valid phone</p>:(<p className="text-red-500 text-xs mt-1">Phone required</p> ) }
+                        {phone ? ValidatePhone(phone)?'':flag?<p className="text-red-500 text-xs mt-1">Not a valid phone</p>:'':flag?<p className="text-red-500 text-xs mt-1">Phone required</p>:'' }
                     </div>
                 </div>
             </form>
