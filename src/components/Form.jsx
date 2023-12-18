@@ -1,29 +1,10 @@
 import React, { useState } from "react";
 
-function Form({ id, updateUser, name, email, phone, setErrors }) {
-  
- const ValidateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    setErrors(emailRegex.test(email))
-    return emailRegex.test(email)
-  }
-
-   const ValidatePhone = (phone) => {
-    const formattedPhone = phone.replace(/\D/g, "").substr(0, 10);
-    const isValidPhone = formattedPhone.length === 10;
-    return isValidPhone
- }
-
-  const handlePhoneChange = (e) => {
+function Form({ id, updateUser, name, email, phone,ValidateEmail,ValidatePhone }) {
+     const handlePhoneChange = (e) => {
     const formattedPhone = e.target.value.replace(/\D/g, "").substr(0, 10);
-    const isValidPhone = formattedPhone.length === 10;
     updateUser(id, formattedPhone, "phone");
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      phone: isValidPhone,
-    }));
   };
-  
     return (
         <>
             <form className="max-w-md mx-auto px-5">

@@ -49,8 +49,7 @@ function Home() {
             tickets: 0,
         },
     ]);
-    const [errors, setErrors] = useState({});
-// -------------------------------------------------------------------
+    const [errors, setErrors] = useState(false);
 
     const addTicket = async (formData) => {
         console.log("🚀 first url changeing must addTicket ~ formData:", formData)
@@ -73,9 +72,9 @@ function Home() {
 };
 
    const transFormUsers = () => {
+
     const UsersNotEmpty = users && users.every(user => Object.values(user).every(value => value !== ""));
-    const ErrorsIsEmpty =  Object.values(errors).every(value => value === "")
-    if (UsersNotEmpty && ErrorsIsEmpty) {
+    if (UsersNotEmpty && !errors) {
         const firstUser = users[0];
         const formData = {
             "ticket_type": tickets.find((ticket) => ticket.id === active)?.id || '',
@@ -98,7 +97,17 @@ function Home() {
 };
 
 
-// -------------------------------------------------------------------
+ const ValidateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email)
+  }
+
+   const ValidatePhone = (phone) => {
+    const formattedPhone = phone.replace(/\D/g, "").substr(0, 10);
+    const isValidPhone = formattedPhone.length === 10;
+    return isValidPhone
+ }
+
 
     const updateCount = (itemId, count, updateBy = 0, ticketsCout) => {
         const updatedItems = tickets.map((item) =>
@@ -183,8 +192,6 @@ function Home() {
             }
             return user;
         });
-
-        // Update the state with the new array
         setUsers(updatedUsers);
     };
 
@@ -209,18 +216,22 @@ function Home() {
         });
 
         tickets.map((ticket) => {
-            // temp = temp + ticket.count;
             setTotalCount((prevCount) => prevCount + ticket.tickets);
         });
 
         setTotalPrice(total_price);
     }, [tickets]);
 
-    //   useEffect(() => {
-    //     console.log("tickets : ", tickets);
-    //     // console.log("totalCount : ", totalCount);
-    //     console.log("users : ", users);
-    //   }, [tickets, totalCount, users]);
+      useEffect(() => {
+        setErrors(false)
+        users.map((user)=>{
+            if (user.name==='' || user.email ==='' || !ValidateEmail(user.email) || !ValidatePhone(user.phone)) {
+                setErrors(true) 
+            }
+        })
+        
+      }, [users]);
+
     return (
         <div>
             <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center my-5 mb-[50px]">
@@ -245,8 +256,8 @@ function Home() {
                                         name={user?.name}
                                         email={user?.email}
                                         phone={user?.phone}
-                                        errors={errors}
-                                        setErrors={setErrors}
+                                        ValidateEmail={ValidateEmail}
+                                        ValidatePhone={ValidatePhone}
                                     />
                                 </div>
 
