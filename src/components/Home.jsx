@@ -55,7 +55,7 @@ function Home() {
     const addTicket = async (formData) => {
         console.log("🚀 first url changeing must addTicket ~ formData:", formData)
         try {
-            const response = await axios.post('https://app.omyglamore.com', formData, {
+            const response = await axios.post('https://app.omyglamore.com/api/add-tickets', formData, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
