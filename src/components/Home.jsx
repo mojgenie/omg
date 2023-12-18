@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import TicketLabel from "./TicketLabel";
 import ProceedLabel from "./ProceedLabel";
 import Form from "./Form";
+import axios from "axios";
 
 function Home() {
     const [step, setStep] = useState(0);
@@ -48,6 +49,65 @@ function Home() {
             tickets: 0,
         },
     ]);
+    const [errors, setErrors] = useState(false);
+
+    const addTicket = async (formData) => {
+        console.log("🚀 first url changeing must addTicket ~ formData:", formData)
+        try {
+            const response = await axios.post('http://192.168.0.3:8001/api/add-tickets', formData, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            });
+            if (response.status === 200) {
+            const responseData = response.data;
+            window.location.href = responseData.payment_url;
+            } else {
+            console.error('API call failed:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error during API call:', error);
+        }
+};
+
+   const transFormUsers = () => {
+
+    const UsersNotEmpty = users && users.every(user => Object.values(user).every(value => value !== ""));
+    if (UsersNotEmpty && !errors) {
+        const firstUser = users[0];
+        const formData = {
+            "ticket_type": tickets.find((ticket) => ticket.id === active)?.id || '',
+            "ticket_one": {
+                "name": firstUser.name || '',
+                "email": firstUser.email || '',
+                "ph_no": firstUser.phone || '',
+            },
+            ...(users.length > 1 && {
+                "other_tickets": users.slice(1).map((user) => ({
+                    "name": user?.name || firstUser.name || '',
+                    "email": user?.email || firstUser.email || '',
+                    "ph_no": user?.phone || firstUser.phone || '',
+                })),
+            }),
+        };
+
+        addTicket(formData);
+    }
+};
+
+
+ const ValidateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email)
+  }
+
+   const ValidatePhone = (phone) => {
+    const formattedPhone = phone.replace(/\D/g, "").substr(0, 10);
+    const isValidPhone = formattedPhone.length === 10;
+    return isValidPhone
+ }
+
 
     const updateCount = (itemId, count, updateBy = 0, ticketsCout) => {
         const updatedItems = tickets.map((item) =>
@@ -117,7 +177,7 @@ function Home() {
     const ticketCount = () => {};
 
     // Function to update the value of a specific property in the array
-    const updateUserName = (userId, newValue, type) => {
+    const updateUser = (userId, newValue, type) => {
         // Create a new array with the updated object
         const updatedUsers = users.map((user) => {
             if (user.id === userId && type === "name") {
@@ -132,8 +192,6 @@ function Home() {
             }
             return user;
         });
-
-        // Update the state with the new array
         setUsers(updatedUsers);
     };
 
@@ -158,43 +216,48 @@ function Home() {
         });
 
         tickets.map((ticket) => {
-            // temp = temp + ticket.count;
             setTotalCount((prevCount) => prevCount + ticket.tickets);
         });
 
         setTotalPrice(total_price);
     }, [tickets]);
 
-    //   useEffect(() => {
-    //     console.log("tickets : ", tickets);
-    //     // console.log("totalCount : ", totalCount);
-    //     console.log("users : ", users);
-    //   }, [tickets, totalCount, users]);
+      useEffect(() => {
+        setErrors(false)
+        users.map((user)=>{
+            if (user.name==='' || user.email ==='' || !ValidateEmail(user.email) || !ValidatePhone(user.phone)) {
+                setErrors(true) 
+            }
+        })
+        
+      }, [users]);
 
     return (
         <div>
             <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center my-5 mb-[50px]">
-                {proceed == false ? "Select your " : "Confrom your "}
+                {proceed == false ? "Select your " : "confirm your "}
                 <span className="underline underline-offset-3 decoration-8 decoration-blue-400 dark:decoration-blue-600">
                     Ticket's
                 </span>
             </h1>
             {proceed === true ? (
                 <div>
-                    {users.map((user, index) => {
+                    {users?.map((user, index) => {
                         return (
-                            <>
-                                <div key={index}>
+                            <div key={index}>
+                                <div>
                                     <p className="text-sm font-light text-gray-500 px-5 pb-5">
                                         Tiket :{index + 1}
                                     </p>
                                     <Form
-                                        key={index}
+                                        key={user?.id}
                                         id={user?.id}
-                                        updateUserName={updateUserName}
+                                        updateUser={updateUser}
                                         name={user?.name}
                                         email={user?.email}
                                         phone={user?.phone}
+                                        ValidateEmail={ValidateEmail}
+                                        ValidatePhone={ValidatePhone}
                                     />
                                 </div>
 
@@ -216,7 +279,7 @@ function Home() {
                                         </label>
                                     </div>
                                 )}
-                            </>
+                            </div>
                         );
                     })}
                 </div>
@@ -259,6 +322,7 @@ function Home() {
                     setProceed={setProceed}
                     onProceed={onProceed}
                     totalPrice={totalPrice}
+                    toPayment={transFormUsers}
                 />
             ) : null}
         </div>
