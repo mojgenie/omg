@@ -143,7 +143,7 @@ function HomeSinglePage() {
             <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center my-5 mb-[50px]">
                 {proceed == false ? "Select your " : "confirm your "}
                 <span className="underline underline-offset-3 decoration-8 decoration-blue-400 dark:decoration-blue-600">
-                    Ticket's
+                    Tickets
                 </span>
             </h1>
             {proceed === true ? (
@@ -153,7 +153,7 @@ function HomeSinglePage() {
                             <>
                                 <div key={index}>
                                     <p className="text-sm font-light text-gray-500 px-5 pb-5">
-                                        Tiket :{index + 1}
+                                        Ticket :{index + 1}
                                     </p>
                                     <Form
                                         key={index}

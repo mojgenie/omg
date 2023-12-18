@@ -50,11 +50,12 @@ function Home() {
         },
     ]);
     const [errors, setErrors] = useState(false);
+    const [flag, setFlag] = useState(false);
 
     const addTicket = async (formData) => {
         console.log("🚀 first url changeing must addTicket ~ formData:", formData)
         try {
-            const response = await axios.post('http://192.168.0.3:8001/api/add-tickets', formData, {
+            const response = await axios.post('https://app.omyglamore.com', formData, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -72,7 +73,7 @@ function Home() {
 };
 
    const transFormUsers = () => {
-
+   setFlag(true)
     const UsersNotEmpty = users && users.every(user => Object.values(user).every(value => value !== ""));
     if (UsersNotEmpty && !errors) {
         const firstUser = users[0];
@@ -226,7 +227,7 @@ function Home() {
         setErrors(false)
         users.map((user)=>{
             if (user.name==='' || user.email ==='' || !ValidateEmail(user.email) || !ValidatePhone(user.phone)) {
-                setErrors(true) 
+                setErrors(true)
             }
         })
         
@@ -237,7 +238,7 @@ function Home() {
             <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center my-5 mb-[50px]">
                 {proceed == false ? "Select your " : "confirm your "}
                 <span className="underline underline-offset-3 decoration-8 decoration-blue-400 dark:decoration-blue-600">
-                    Ticket's
+                    Tickets
                 </span>
             </h1>
             {proceed === true ? (
@@ -247,7 +248,7 @@ function Home() {
                             <div key={index}>
                                 <div>
                                     <p className="text-sm font-light text-gray-500 px-5 pb-5">
-                                        Tiket :{index + 1}
+                                        Ticket :{index + 1}
                                     </p>
                                     <Form
                                         key={user?.id}
@@ -258,6 +259,7 @@ function Home() {
                                         phone={user?.phone}
                                         ValidateEmail={ValidateEmail}
                                         ValidatePhone={ValidatePhone}
+                                        flag={flag}
                                     />
                                 </div>
 
