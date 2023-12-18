@@ -53,29 +53,28 @@ function Home() {
 // -------------------------------------------------------------------
 
     const addTicket = async (formData) => {
-        console.log("🚀 ~ file: Home.jsx:56 ~ addTicket ~ formData:", formData)
-        // try {
-        //     const response = await axios.post('http://192.168.0.3:8001/api/add-tickets', formData, {
-        //     headers: {
-        //         'Accept': 'application/json',
-        //         'Content-Type': 'application/json'
-        //     },
-        //     });
-        //     if (response.status === 200) {
-        //     const responseData = response.data;
-        //     window.location.href = responseData.payment_url;
-        //     } else {
-        //     console.error('API call failed:', response.statusText);
-        //     }
-        // } catch (error) {
-        //     console.error('Error during API call:', error);
-        // }
+        console.log("🚀 first url changeing must addTicket ~ formData:", formData)
+        try {
+            const response = await axios.post('http://192.168.0.3:8001/api/add-tickets', formData, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            });
+            if (response.status === 200) {
+            const responseData = response.data;
+            window.location.href = responseData.payment_url;
+            } else {
+            console.error('API call failed:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error during API call:', error);
+        }
 };
 
    const transFormUsers = () => {
     const UsersNotEmpty = users && users.every(user => Object.values(user).every(value => value !== ""));
     const ErrorsIsEmpty =  Object.values(errors).every(value => value === "")
-    console.log("🚀 ~ file: Home.jsx:78 ~ transFormUsers ~ errors:", errors)
     if (UsersNotEmpty && ErrorsIsEmpty) {
         const firstUser = users[0];
         const formData = {
