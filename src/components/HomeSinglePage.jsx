@@ -6,7 +6,6 @@ import { ValidateEmail, ValidatePhone, generateUniqueId, scrollToTargetDiv } fro
 import addTicket from "../api";
 function HomeSinglePage() {
     const targetDivRef = useRef(null);
-
     const [step, setStep] = useState(0);
     const [proceed, setProceed] = useState(false);
     const [totalCount, setTotalCount] = useState(0);
@@ -62,6 +61,8 @@ function HomeSinglePage() {
 
         setTickets(updatedItems);
     };
+
+    
     const handleAdd = (itemId, count, updateBy = 0, ticketsCout) => {
         const updatedItems = tickets.map((item) =>
             item.id === itemId
@@ -104,28 +105,21 @@ function HomeSinglePage() {
     };
 
     const updateUser = (userId, newValue, type) => {
-        // Create a new array with the updated object
         const updatedUsers = users.map((user) => {
             if (user.id === userId && type === "name") {
-                // Update the specified property (name in this case)
                 return { ...user, name: newValue };
             } else if (user.id === userId && type === "email") {
-                // Update the specified property (name in this case)
                 return { ...user, email: newValue };
             } else if (user.id === userId && type === "phone") {
-                // Update the specified property (name in this case)
                 return { ...user, phone: newValue };
             }
             return user;
         });
-
-        // Update the state with the new array
         setUsers(updatedUsers);
     };
 
     const updateAllUsers = () => {
         const primaryUSer = users[0];
-
         const updatedUsers = users.map((user) => {
             return {
                 ...user,

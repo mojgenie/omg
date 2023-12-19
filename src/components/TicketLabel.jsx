@@ -99,12 +99,10 @@ function TicketLabel({
                             -
                         </span>
                         {count}
-
                         <span
                             className="px-5 py-2.5 cursor-pointer"
                             onClick={() => {
                                 handleAdd(id, count, noOf, tickets);
-
                                 onProceed(noOf);
                             }}
                         >
