@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Toaster } from 'react-hot-toast';
 
 function TicketLabel({
     id,
@@ -110,7 +111,8 @@ function TicketLabel({
                         </span>
                     </div>
                 </div>
-            ) : null}
+           ) : null}
+         <Toaster  />
         </div>
     );
 }

@@ -4,10 +4,11 @@ import ProceedLabel from "./ProceedLabel";
 import Form from "./Form";
 import { ValidateEmail, ValidatePhone, generateUniqueId, scrollToTargetDiv } from "../util";
 import addTicket from "../api";
+import toast from 'react-hot-toast';
 
 function Home() {
     const targetDivRef = useRef(null);
-
+    const clickCountRef = useRef(0);
     const [step, setStep] = useState(0);
     const [proceed, setProceed] = useState(false);
     const [totalCount, setTotalCount] = useState(0);
@@ -44,7 +45,7 @@ function Home() {
         },
         {
             id: 4,
-            title: "silver",
+            title: "silver ",
             count: 0,
             noOf: 1,
             price: 499,
@@ -87,22 +88,35 @@ function Home() {
                 ? { ...item, count: count + 1, tickets: ticketsCout + updateBy }
                 : item
         );
-
         setTickets(updatedItems);
     };
 
-    const handleAdd = (itemId, count, updateBy = 0, ticketsCout) => {
-        const updatedItems = tickets.map((item) =>
-            item.id === itemId
-                ? {
-                    ...item,
-                    count: count + 1,
-                    tickets: ticketsCout + updateBy,
-                }
-                : item
-        );
+    const notify = () => {
+        toast.error(`Maximum ${totalCount} Ticket.` );
+        setTimeout(() => {
+            clickCountRef.current = 0;
+        }, 2000);
+    }
 
-        setTickets(updatedItems);
+    const handleAdd = (itemId, count, updateBy = 0, ticketsCout) => {
+        if (ticketsCout + updateBy <= 21) {
+            const updatedItems = tickets.map((item) =>
+                item.id === itemId
+                    ? {
+                        ...item,
+                        count: count + 1,
+                        tickets: ticketsCout + updateBy,
+                    }
+                    : item
+            );
+            setTickets(updatedItems);
+        }
+        else {
+            clickCountRef.current += 1;
+            if (clickCountRef.current === 1) {
+                notify();
+            }
+        }
     };
 
     const handleRemove = (itemId, count, updateBy = 0, ticketsCout) => {
@@ -111,13 +125,11 @@ function Home() {
                 ? { ...item, count: count - 1, tickets: ticketsCout - updateBy }
                 : item
         );
-
         setTickets(updatedItems);
     };
 
     let total_price = 0;
     const onProceed = () => {
-
         const updateUserArray = () => {
             const usersArray = [];
 
@@ -128,26 +140,20 @@ function Home() {
                     email: ``,
                     phone: ``,
                 };
-
                 usersArray.push(user);
             }
-
             setUsers(usersArray);
         };
         updateUserArray();
     };
 
     const updateUser = (userId, newValue, type) => {
-        // Create a new array with the updated object
         const updatedUsers = users.map((user) => {
             if (user.id === userId && type === "name") {
-                // Update the specified property (name in this case)
                 return { ...user, name: newValue };
             } else if (user.id === userId && type === "email") {
-                // Update the specified property (name in this case)
                 return { ...user, email: newValue };
             } else if (user.id === userId && type === "phone") {
-                // Update the specified property (name in this case)
                 return { ...user, phone: newValue };
             }
             return user;
@@ -157,7 +163,6 @@ function Home() {
 
     const updateAllUsers = () => {
         const primaryUSer = users[0];
-
         const updatedUsers = users.map((user) => {
             return {
                 ...user,
@@ -189,12 +194,32 @@ function Home() {
                 setErrors(true)
             }
         })
-
     }, [users]);
 
     useEffect(() => {
         scrollToTargetDiv(targetDivRef)
     }, [])
+
+    useEffect(() => {
+        scrollToTargetDiv(targetDivRef)
+    }, [targetDivRef])
+
+    useEffect(() => {
+        const disableBackButton = () => {
+            window.history.pushState(null, null, document.URL);
+            window.addEventListener('popstate', () => {
+                setProceed(false)
+                window.history.pushState(null, null, document.URL);
+            });
+        };
+        disableBackButton();
+        return () => {
+            window.removeEventListener('popstate', () => {
+                window.history.pushState(null, null, document.URL);
+            });
+        };
+    }, []);
+
     return (
         <div>
             <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center my-5 mb-[50px]">
@@ -271,6 +296,7 @@ function Home() {
                                 active={active}
                                 setActive={setActive}
                                 setTickets={setTickets}
+
                             />
                         ))}
                     </div>
