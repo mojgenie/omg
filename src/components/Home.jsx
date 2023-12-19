@@ -137,7 +137,6 @@ function Home() {
         updateUserArray();
     };
 
-    // Function to update the value of a specific property in the array
     const updateUser = (userId, newValue, type) => {
         // Create a new array with the updated object
         const updatedUsers = users.map((user) => {

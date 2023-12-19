@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TicketLabel from "./TicketLabel";
 import ProceedLabel from "./ProceedLabel";
 import Form from "./Form";
+import { ValidateEmail, ValidatePhone, generateUniqueId, scrollToTargetDiv } from "../util";
+import addTicket from "../api";
 function HomeSinglePage() {
+    const targetDivRef = useRef(null);
+
     const [step, setStep] = useState(0);
     const [proceed, setProceed] = useState(false);
     const [totalCount, setTotalCount] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
     const [users, setUsers] = useState([]);
-
+    const [active, setActive] = useState(null);
     const [tickets, setTickets] = useState([
         {
             id: 4,
@@ -20,6 +24,34 @@ function HomeSinglePage() {
             tickets: 0,
         },
     ]);
+    const [errors, setErrors] = useState(false);
+    const [flag, setFlag] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const transFormUsers = () => {
+        setFlag(true)
+        const UsersNotEmpty = users && users.every(user => Object.values(user).every(value => value !== ""));
+        if (UsersNotEmpty && !errors) {
+            const firstUser = users[0];
+            const formData = {
+                ticket_type: tickets.find((ticket) => ticket.id === active)?.id || '',
+                ticket_one: {
+                    name: firstUser.name || '',
+                    email: firstUser.email || '',
+                    ph_no: firstUser.phone || '',
+                },
+                ...(users.length > 1 && {
+                    other_tickets: users.slice(1).map((user) => ({
+                        name: user?.name,
+                        email: user?.email,
+                        ph_no: user?.phone,
+                    })),
+                }),
+            };
+
+            addTicket(formData, setLoading);
+        }
+    };
 
     const updateCount = (itemId, count, updateBy = 0, ticketsCout) => {
         const updatedItems = tickets.map((item) =>
@@ -49,18 +81,8 @@ function HomeSinglePage() {
         setTickets(updatedItems);
     };
 
-    function generateUniqueId() {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2);
-    }
-
-    let temp = 0;
     let total_price = 0;
-    const onProceed = (updateBy) => {
-        // setTotalCount(0);
-        // tickets.map((ticket) => {
-        //     // temp = temp + ticket.count;
-        //     setTotalCount((prevCount) => prevCount + ticket.count);
-        // });
+    const onProceed = () => {
 
         const updateUserArray = () => {
             const usersArray = [];
@@ -79,12 +101,9 @@ function HomeSinglePage() {
             setUsers(usersArray);
         };
         updateUserArray();
-        // setTotalCount(temp);
     };
-    const ticketCount = () => {};
 
-    // Function to update the value of a specific property in the array
-    const updateUserName = (userId, newValue, type) => {
+    const updateUser = (userId, newValue, type) => {
         // Create a new array with the updated object
         const updatedUsers = users.map((user) => {
             if (user.id === userId && type === "name") {
@@ -125,7 +144,6 @@ function HomeSinglePage() {
         });
 
         tickets.map((ticket) => {
-            // temp = temp + ticket.count;
             setTotalCount((prevCount) => prevCount + ticket.tickets);
         });
 
@@ -133,11 +151,18 @@ function HomeSinglePage() {
     }, [tickets]);
 
     useEffect(() => {
-        console.clear();
-        console.log("tickets : ", tickets);
-        // console.log("totalCount : ", totalCount);
-        console.log("users : ", users);
-    }, [tickets, totalCount, users]);
+        setErrors(false)
+        users.map((user) => {
+            if (user.name === '' || user.email === '' || !ValidateEmail(user.email) || !ValidatePhone(user.phone)) {
+                setErrors(true)
+            }
+        })
+
+    }, [users]);
+
+    useEffect(() => {
+        scrollToTargetDiv(targetDivRef)
+    }, [])
     return (
         <div>
             <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center my-5 mb-[50px]">
@@ -150,18 +175,21 @@ function HomeSinglePage() {
                 <div>
                     {users.map((user, index) => {
                         return (
-                            <>
-                                <div key={index}>
+                            <div key={index}>
+                                <div ref={targetDivRef}>
                                     <p className="text-sm font-light text-gray-500 px-5 pb-5">
                                         Ticket :{index + 1}
                                     </p>
                                     <Form
-                                        key={index}
+                                        key={user?.id}
                                         id={user?.id}
-                                        updateUserName={updateUserName}
+                                        updateUser={updateUser}
                                         name={user?.name}
                                         email={user?.email}
                                         phone={user?.phone}
+                                        ValidateEmail={ValidateEmail}
+                                        ValidatePhone={ValidatePhone}
+                                        flag={flag}
                                     />
                                 </div>
 
@@ -183,15 +211,16 @@ function HomeSinglePage() {
                                         </label>
                                     </div>
                                 )}
-                            </>
+                            </div>
                         );
                     })}
                 </div>
             ) : (
                 <div>
                     <div className="max-w-[800px] mx-auto">
-                        {tickets?.map((ticket) => (
+                        {tickets?.map((ticket, index) => (
                             <TicketLabel
+                                key={index}
                                 onProceed={onProceed}
                                 id={ticket?.id}
                                 noOf={ticket?.noOf}
@@ -199,6 +228,7 @@ function HomeSinglePage() {
                                 setStep={setStep}
                                 client:load
                                 gold={ticket?.type === "gold"}
+                                silver={ticket?.type === "silver"}
                                 title={ticket?.title}
                                 count={ticket?.count}
                                 price={ticket?.price}
@@ -206,6 +236,9 @@ function HomeSinglePage() {
                                 handleAdd={handleAdd}
                                 handleRemove={handleRemove}
                                 tickets={ticket.tickets}
+                                active={active}
+                                setActive={setActive}
+                                setTickets={setTickets}
                             />
                         ))}
                     </div>
@@ -218,6 +251,8 @@ function HomeSinglePage() {
                     setProceed={setProceed}
                     onProceed={onProceed}
                     totalPrice={totalPrice}
+                    toPayment={transFormUsers}
+                    loading={loading}
                 />
             ) : null}
         </div>

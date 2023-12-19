@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const addTicket = async (formData, setLoading) => {
+    console.log("🚀 ~ file: index.js:4 ~ addTicket ~ formData:", formData)
     setLoading(true)
     axios.post('https://app.omyglamore.com/api/add-tickets', formData, {
         headers: {
