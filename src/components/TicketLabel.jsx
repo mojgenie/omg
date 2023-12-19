@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Toaster } from 'react-hot-toast';
 
 function TicketLabel({
     id,
@@ -16,6 +17,7 @@ function TicketLabel({
     tickets,
     active,
     setActive,
+    maxticket
 }) {
     return (
         <div className="px-3 py-5 flex items-center justify-between m-5 shadow rounded-[25px]">
@@ -110,7 +112,8 @@ function TicketLabel({
                         </span>
                     </div>
                 </div>
-            ) : null}
+           ) : null}
+         <Toaster  />
         </div>
     );
 }

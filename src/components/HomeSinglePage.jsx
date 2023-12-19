@@ -4,6 +4,7 @@ import ProceedLabel from "./ProceedLabel";
 import Form from "./Form";
 import { ValidateEmail, ValidatePhone, generateUniqueId, scrollToTargetDiv } from "../util";
 import addTicket from "../api";
+
 function HomeSinglePage() {
     const targetDivRef = useRef(null);
     const [step, setStep] = useState(0);
@@ -58,36 +59,37 @@ function HomeSinglePage() {
                 ? { ...item, count: count + 1, tickets: ticketsCout + updateBy }
                 : item
         );
-
         setTickets(updatedItems);
     };
 
-    
     const handleAdd = (itemId, count, updateBy = 0, ticketsCout) => {
-        const updatedItems = tickets.map((item) =>
-            item.id === itemId
-                ? { ...item, count: count + 1, tickets: ticketsCout + updateBy }
-                : item
-        );
+        if (ticketsCout + updateBy <= 21) {
+            const updatedItems = tickets.map((item) =>
+                item.id === itemId
+                    ? { ...item, count: count + 1, tickets: ticketsCout + updateBy }
+                    : item
+            );
 
-        setTickets(updatedItems);
+            setTickets(updatedItems);
+        }
+        //  else{
+        //     alert('Maximum ticket is 21')
+        // }
     };
+
     const handleRemove = (itemId, count, updateBy = 0, ticketsCout) => {
         const updatedItems = tickets.map((item) =>
             item.id === itemId
                 ? { ...item, count: count - 1, tickets: ticketsCout - updateBy }
                 : item
         );
-
         setTickets(updatedItems);
     };
 
     let total_price = 0;
     const onProceed = () => {
-
         const updateUserArray = () => {
             const usersArray = [];
-
             for (let i = 0; i < totalCount; i++) {
                 const user = {
                     id: generateUniqueId(),
@@ -95,10 +97,8 @@ function HomeSinglePage() {
                     email: ``,
                     phone: ``,
                 };
-
                 usersArray.push(user);
             }
-
             setUsers(usersArray);
         };
         updateUserArray();
@@ -136,11 +136,9 @@ function HomeSinglePage() {
         tickets.map((ticket) => {
             total_price = total_price + ticket.count * ticket.price;
         });
-
         tickets.map((ticket) => {
             setTotalCount((prevCount) => prevCount + ticket.tickets);
         });
-
         setTotalPrice(total_price);
     }, [tickets]);
 
@@ -156,7 +154,24 @@ function HomeSinglePage() {
 
     useEffect(() => {
         scrollToTargetDiv(targetDivRef)
-    }, [])
+    }, [targetDivRef])
+
+    useEffect(() => {
+        const disableBackButton = () => {
+            window.history.pushState(null, null, document.URL);
+            window.addEventListener('popstate', () => {
+                setProceed(false)
+                // window.history.pushState(null, null, document.URL);
+            });
+        };
+        disableBackButton();
+        return () => {
+            window.removeEventListener('popstate', () => {
+                window.history.pushState(null, null, document.URL);
+            });
+        };
+    }, []);
+
     return (
         <div>
             <h1 className="mb-4 text-3xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white text-center my-5 mb-[50px]">
@@ -186,7 +201,6 @@ function HomeSinglePage() {
                                         flag={flag}
                                     />
                                 </div>
-
                                 {index === 0 && users?.length > 1 && (
                                     <div className="px-5">
                                         <label className="relative inline-flex items-center cursor-pointer ">

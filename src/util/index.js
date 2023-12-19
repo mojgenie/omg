@@ -16,8 +16,8 @@ const generateUniqueId = () => {
     const scrollToTargetDiv = (targetDivRef) => {
         if (targetDivRef.current) {
             targetDivRef.current.scrollIntoView({
-                behavior: 'smooth', // You can adjust the scroll behavior
-                block: 'start',     // You can adjust the vertical alignment
+                behavior: 'smooth',
+                block: 'start',
             });
         }
     };
