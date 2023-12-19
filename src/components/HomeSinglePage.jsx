@@ -161,7 +161,7 @@ function HomeSinglePage() {
             window.history.pushState(null, null, document.URL);
             window.addEventListener('popstate', () => {
                 setProceed(false)
-                // window.history.pushState(null, null, document.URL);
+                window.history.pushState(null, null, document.URL);
             });
         };
         disableBackButton();

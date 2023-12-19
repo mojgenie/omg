@@ -19,7 +19,6 @@ const addTicket = async (formData, setLoading) => {
     }).finally(() => {
 
     })
-
 };
 
 export default addTicket

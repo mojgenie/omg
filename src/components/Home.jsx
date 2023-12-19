@@ -45,7 +45,7 @@ function Home() {
         },
         {
             id: 4,
-            title: "silver",
+            title: "silver ",
             count: 0,
             noOf: 1,
             price: 499,
@@ -92,7 +92,7 @@ function Home() {
     };
 
     const notify = () => {
-        toast.error('Maximum 20 Ticket.' );
+        toast.error(`Maximum ${totalCount} Ticket.` );
         setTimeout(() => {
             clickCountRef.current = 0;
         }, 2000);
