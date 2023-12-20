@@ -23,7 +23,7 @@ function TicketLabel({
             <div>
                 <h2
                     className={`text-md font-extrabold ${
-                        gold ? "text-[#FF9119]" : "text-[#C0C0C0]"
+                        gold ? "text-[#FF9119]" : "text-indigo-500"
                     }`}
                 >
                     {title}
@@ -57,7 +57,7 @@ function TicketLabel({
                             ? "bg-[#FF9119] hover:bg-[#FF9119]/80"
                             : silver &&
                               (active === null || active === undefined)
-                            ? "bg-[#C0C0C0] hover:bg-[#C0C0C0]/80"
+                            ? "bg-indigo-500 hover:bg-indigo-500/80"
                             : "bg-[#EAECEC] hover:bg-[#EAECEC]/80"
                     }   font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2`}
                 >
@@ -83,7 +83,7 @@ function TicketLabel({
                     className={`text-white ${
                         gold
                             ? "bg-[#FF9119] hover:bg-[#FF9119]/80"
-                            : "bg-[#C0C0C0] hover:bg-[#C0C0C0]/80"
+                            : "bg-indigo-500 hover:bg-indigo-500/80"
                     } focus:ring-4 focus:outline-none focus:ring-[#FF9119]/50 font-medium rounded-lg text-sm text-center dark:hover:bg-[#FF9119]/80 dark:focus:ring-[#FF9119]/40 me-2 mb-2 `}
                 >
                     <div className="inline-flex items-center gap-1">
