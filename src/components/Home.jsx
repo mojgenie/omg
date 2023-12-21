@@ -2,9 +2,14 @@ import React, { useEffect, useRef, useState } from "react";
 import TicketLabel from "./TicketLabel";
 import ProceedLabel from "./ProceedLabel";
 import Form from "./Form";
-import { ValidateEmail, ValidatePhone, generateUniqueId, scrollToTargetDiv } from "../util";
+import {
+    ValidateEmail,
+    ValidatePhone,
+    generateUniqueId,
+    scrollToTargetDiv,
+} from "../util";
 import addTicket from "../api";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 
 function Home() {
     const targetDivRef = useRef(null);
@@ -18,7 +23,7 @@ function Home() {
     const [tickets, setTickets] = useState([
         {
             id: 1,
-            title: "Gold ",
+            title: "Gold - Sitting ",
             count: 0,
             noOf: 4,
             price: 3333,
@@ -27,7 +32,7 @@ function Home() {
         },
         {
             id: 2,
-            title: "Gold ",
+            title: "Gold - Sitting ",
             count: 0,
             noOf: 3,
             price: 2222,
@@ -36,7 +41,7 @@ function Home() {
         },
         {
             id: 3,
-            title: "Gold ",
+            title: "Gold - Sitting ",
             count: 0,
             noOf: 1,
             price: 999,
@@ -45,7 +50,7 @@ function Home() {
         },
         {
             id: 4,
-            title: "silver ",
+            title: "Silver - Standing ",
             count: 0,
             noOf: 1,
             price: 499,
@@ -58,16 +63,21 @@ function Home() {
     const [loading, setLoading] = useState(false);
 
     const transFormUsers = () => {
-        setFlag(true)
-        const UsersNotEmpty = users && users.every(user => Object.values(user).every(value => value !== ""));
+        setFlag(true);
+        const UsersNotEmpty =
+            users &&
+            users.every((user) =>
+                Object.values(user).every((value) => value !== "")
+            );
         if (UsersNotEmpty && !errors) {
             const firstUser = users[0];
             const formData = {
-                ticket_type: tickets.find((ticket) => ticket.id === active)?.id || '',
+                ticket_type:
+                    tickets.find((ticket) => ticket.id === active)?.id || "",
                 ticket_one: {
-                    name: firstUser.name || '',
-                    email: firstUser.email || '',
-                    ph_no: firstUser.phone || '',
+                    name: firstUser.name || "",
+                    email: firstUser.email || "",
+                    ph_no: firstUser.phone || "",
                 },
                 ...(users.length > 1 && {
                     other_tickets: users.slice(1).map((user) => ({
@@ -92,26 +102,25 @@ function Home() {
     };
 
     const notify = () => {
-        toast.error(`Maximum ${totalCount} Ticket.` );
+        toast.error(`Maximum ${totalCount} Ticket.`);
         setTimeout(() => {
             clickCountRef.current = 0;
         }, 2000);
-    }
+    };
 
     const handleAdd = (itemId, count, updateBy = 0, ticketsCout) => {
         if (ticketsCout + updateBy <= 21) {
             const updatedItems = tickets.map((item) =>
                 item.id === itemId
                     ? {
-                        ...item,
-                        count: count + 1,
-                        tickets: ticketsCout + updateBy,
-                    }
+                          ...item,
+                          count: count + 1,
+                          tickets: ticketsCout + updateBy,
+                      }
                     : item
             );
             setTickets(updatedItems);
-        }
-        else {
+        } else {
             clickCountRef.current += 1;
             if (clickCountRef.current === 1) {
                 notify();
@@ -188,33 +197,38 @@ function Home() {
     }, [tickets]);
 
     useEffect(() => {
-        setErrors(false)
+        setErrors(false);
         users.map((user) => {
-            if (user.name === '' || user.email === '' || !ValidateEmail(user.email) || !ValidatePhone(user.phone)) {
-                setErrors(true)
+            if (
+                user.name === "" ||
+                user.email === "" ||
+                !ValidateEmail(user.email) ||
+                !ValidatePhone(user.phone)
+            ) {
+                setErrors(true);
             }
-        })
+        });
     }, [users]);
 
     useEffect(() => {
-        scrollToTargetDiv(targetDivRef)
-    }, [])
+        scrollToTargetDiv(targetDivRef);
+    }, []);
 
     useEffect(() => {
-        scrollToTargetDiv(targetDivRef)
-    }, [targetDivRef])
+        scrollToTargetDiv(targetDivRef);
+    }, [targetDivRef]);
 
     useEffect(() => {
         const disableBackButton = () => {
             window.history.pushState(null, null, document.URL);
-            window.addEventListener('popstate', () => {
-                setProceed(false)
+            window.addEventListener("popstate", () => {
+                setProceed(false);
                 window.history.pushState(null, null, document.URL);
             });
         };
         disableBackButton();
         return () => {
-            window.removeEventListener('popstate', () => {
+            window.removeEventListener("popstate", () => {
                 window.history.pushState(null, null, document.URL);
             });
         };
@@ -296,16 +310,15 @@ function Home() {
                                 active={active}
                                 setActive={setActive}
                                 setTickets={setTickets}
-
                             />
                         ))}
                     </div>
                 </div>
             )}
             {tickets[0].count > 0 ||
-                tickets[1].count > 0 ||
-                tickets[2].count > 0 ||
-                tickets[3].count > 0 ? (
+            tickets[1].count > 0 ||
+            tickets[2].count > 0 ||
+            tickets[3].count > 0 ? (
                 <ProceedLabel
                     totalCount={totalCount}
                     proceed={proceed}
